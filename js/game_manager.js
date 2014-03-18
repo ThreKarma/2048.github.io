@@ -3,6 +3,7 @@ function GameManager(size, InputManager, Actuator, ScoreManager) {
   this.inputManager = new InputManager;
   this.scoreManager = new ScoreManager;
   this.actuator     = new Actuator;
+  this.cheatEasy    = true;
 
   this.startTiles   = 2;
 
@@ -53,6 +54,30 @@ GameManager.prototype.setup = function () {
 GameManager.prototype.addStartTiles = function () {
   for (var i = 0; i < this.startTiles; i++) {
     this.addRandomTile();
+  }
+};
+
+// Adds a well-tempered tile in a random position
+GameManager.prototype.addEasyTile = function () {
+  if (this.grid.cellsAvailable()) {
+    var cell = this.grid.randomAvailableCell();
+
+    // Find good value
+    var values = [];
+    for (var x = cell.x - 1; x <= cell.x + 1; x++) {
+      for (var y = cell.y - 1; y <= cell.y + 1; y++) {
+        var testCell = { x: x, y: y};
+        tile = this.grid.cellContent(testCell);
+        if (tile) {
+          values.push(this.grid.cellContent(testCell).value);
+        }
+      }
+    }
+    values.push(2);
+    value = values[Math.floor(Math.random() * values.length)];
+
+    var tile = new Tile(cell, value);
+    this.grid.insertTile(tile);
   }
 };
 
@@ -153,7 +178,11 @@ GameManager.prototype.move = function (direction) {
   });
 
   if (moved) {
-    this.addRandomTile();
+    if (this.cheatEasy) {
+      this.addEasyTile();
+    } else {
+      this.addRandomTile();
+    }
 
     if (!this.movesAvailable()) {
       this.over = true; // Game over!
