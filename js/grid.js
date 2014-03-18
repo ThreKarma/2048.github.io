@@ -69,6 +69,17 @@ Grid.prototype.cellContent = function (cell) {
   }
 };
 
+Grid.prototype.cellValues = function (cells) {
+  var values = [];
+  for (var i = 0; i < cells.length; ++i) {
+    tile = this.cellContent(cells[i]);
+    if (tile) {
+      values.push(tile.value);
+    }
+  }
+  return values;
+};
+
 // Inserts a tile at its position
 Grid.prototype.insertTile = function (tile) {
   this.cells[tile.x][tile.y] = tile;

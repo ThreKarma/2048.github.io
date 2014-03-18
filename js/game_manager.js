@@ -63,15 +63,17 @@ GameManager.prototype.addEasyTile = function () {
     var cell = this.grid.randomAvailableCell();
 
     // Find good value
-    var values = [];
-    for (var x = cell.x - 1; x <= cell.x + 1; x++) {
-      for (var y = cell.y - 1; y <= cell.y + 1; y++) {
-        var testCell = { x: x, y: y};
-        tile = this.grid.cellContent(testCell);
-        if (tile) {
-          values.push(this.grid.cellContent(testCell).value);
-        }
-      }
+    var values = this.grid.cellValues([
+      { x: cell.x - 1, y: cell.y },
+      { x: cell.x, y: cell.y - 1 },
+      { x: cell.x + 1, y: cell.y },
+      { x: cell.x, y: cell.y + 1 }]);
+    if (values.length == 0) {
+      values = this.grid.cellValues([
+        { x: cell.x - 1, y: cell.y - 1 },
+        { x: cell.x - 1, y: cell.y + 1 },
+        { x: cell.x + 1, y: cell.y - 1 },
+        { x: cell.x + 1, y: cell.y + 1 }]);
     }
     values.push(2);
     value = values[Math.floor(Math.random() * values.length)];
